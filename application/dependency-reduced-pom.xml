@@ -98,6 +98,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.target>25</maven.compiler.target>
     <maven.compiler.source>25</maven.compiler.source>
+    <maven.compiler.proc>full</maven.compiler.proc>
     <start-class>com.feng.ei.grupo.pooii_trabalho_final.PooiiTrabalhoFinalApplication</start-class>
   </properties>
 </project>

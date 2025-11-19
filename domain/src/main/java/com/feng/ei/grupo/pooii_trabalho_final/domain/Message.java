@@ -10,6 +10,7 @@ import java.util.UUID;
 @Entity
 @Data
 @Builder
+@Table(name = "messages")
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +24,7 @@ public class Message {
     @JoinColumn(name = "to_id")
     private User to;
 
+    @Column(name = "_timestamp")
     private OffsetDateTime timestamp;
     private String content;
     private boolean delivered;

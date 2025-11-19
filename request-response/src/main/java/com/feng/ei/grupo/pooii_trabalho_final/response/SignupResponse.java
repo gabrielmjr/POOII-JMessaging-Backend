@@ -5,9 +5,6 @@ import lombok.Data;
 
 @Data
 @Builder
-public class LoginResponse {
-    private String username;
-    private String email;
-    private boolean verified;
+public class SignupResponse {
     private String authToken;
 }

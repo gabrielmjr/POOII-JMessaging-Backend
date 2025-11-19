@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface CallLogsRepository extends JpaRepository<CallLog, UUID> {
+public interface CallLogRepository extends JpaRepository<CallLog, UUID> {
 }

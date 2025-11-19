@@ -1,9 +1,6 @@
 package com.feng.ei.grupo.pooii_trabalho_final.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 
@@ -12,6 +9,7 @@ import java.util.UUID;
 @Entity
 @Data
 @Builder
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,5 +19,4 @@ public class User {
     private String password;
     private boolean verified;
     private String lastSeenOn;
-    private String imageUrl;
 }

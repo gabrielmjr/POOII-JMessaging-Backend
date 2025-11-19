@@ -7,24 +7,18 @@ import lombok.Data;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-@Entity
 @Data
 @Builder
-@Table(name = "call_logs")
-public class CallLog {
+@Entity
+@Table(name = "sessions")
+public class Session {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
-    @Column(name = "_timestamp")
-    private OffsetDateTime timestamp;
+    private OffsetDateTime creationDate;
     private String status;
-    private String duration;
 
     @ManyToOne
-    @JoinColumn(name = "from_id")
-    private User from;
-
-    @ManyToOne
-    @JoinColumn(name = "to_id")
-    private User to;
+    @JoinColumn(name = "user_id")
+    private User user;
 }
