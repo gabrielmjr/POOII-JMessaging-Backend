@@ -15,7 +15,8 @@
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <start-class>com.mjrfusion.web.notarion.NotarionApplication</start-class>
+        <maven.compiler.proc>full</maven.compiler.proc>
+        <start-class>com.feng.ei.grupo.pooii_trabalho_final.PooiiTrabalhoFinalApplication</start-class>
     </properties>
 
     <dependencies>
@@ -91,6 +92,7 @@
                 <version>3.6.0</version>
                 <executions>
                     <execution>
+                        <id>shade-jar-with-dependencies</id>
                         <phase>package</phase>
                         <goals>
                             <goal>shade</goal>

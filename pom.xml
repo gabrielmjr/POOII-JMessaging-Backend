@@ -31,6 +31,8 @@
         <module>controller</module>
         <module>domain</module>
         <module>repository</module>
+        <module>request-response</module>
+        <module>services</module>
     </modules>
 
     <scm>
