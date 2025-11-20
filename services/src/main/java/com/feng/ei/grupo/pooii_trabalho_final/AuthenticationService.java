@@ -13,10 +13,12 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -50,7 +52,7 @@ public class AuthenticationService {
         var session = Session.builder()
                 .creationDate(OffsetDateTime.now())
                 .status("ACTIVE")
-                .user(user)
+                .userId(user.getId())
                 .build();
 
         userRepository.save(user);
@@ -76,7 +78,7 @@ public class AuthenticationService {
         var session = Session.builder()
                 .creationDate(OffsetDateTime.now())
                 .status("ACTIVE")
-                .user(user)
+                .userId(user.getId())
                 .build();
         var sessionId = sessionRepository.save(session);
         var authToken = jwtService.createToken(sessionId.getId());
@@ -87,5 +89,11 @@ public class AuthenticationService {
                 .authToken(authToken)
                 .build();
         return ResponseEntity.ok(response);
+    }
+
+    public User getAuthenticatedUser() {
+        var userSession = (Session) Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
+        assert userSession != null;
+        return userRepository.findById(userSession.getUserId()).get();
     }
 }

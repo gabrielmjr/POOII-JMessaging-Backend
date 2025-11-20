@@ -37,15 +37,14 @@ public class JMessagingAuthFilter extends OncePerRequestFilter {
 
         authorization = authorization.substring(7);
 
-        if (!jwtService.validateSessionToken(authorization)) {
+        var session = jwtService.validateSessionToken(authorization);
+        if (session == null) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.flushBuffer();
             return;
         }
 
-        var sessionId = jwtService.getSessionId(authorization);
-        var session = sessionRepository.getById(sessionId);
-        if (!session.equals("ACTIVE")) {
+        if (!session.getStatus().equals("ACTIVE")) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.flushBuffer();
             return;

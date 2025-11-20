@@ -22,7 +22,5 @@ public class Session {
     private OffsetDateTime creationDate;
     private String status;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    private UUID userId;
 }

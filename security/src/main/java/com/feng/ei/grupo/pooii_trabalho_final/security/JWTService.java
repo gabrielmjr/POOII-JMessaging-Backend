@@ -1,5 +1,6 @@
 package com.feng.ei.grupo.pooii_trabalho_final.security;
 
+import com.feng.ei.grupo.pooii_trabalho_final.domain.Session;
 import com.feng.ei.grupo.pooii_trabalho_final.repository.SessionRepository;
 import com.feng.ei.grupo.pooii_trabalho_final.utils.CoreUtils;
 import io.jsonwebtoken.Jwts;
@@ -26,19 +27,19 @@ public class JWTService {
     @Autowired
     private SessionRepository sessionRepository;
 
-    public boolean validateSessionToken(String sessionToken) {
+    public Session validateSessionToken(String sessionToken) {
         try {
             var sessionId = getSessionId(sessionToken);
             if (sessionId == null) {
                 log.error("Empty session id, probably the token is tampered");
-                return false;
+                return null;
             }
 
             var sessionOptional = sessionRepository.findById(sessionId);
-            return sessionOptional.isPresent();
+            return sessionOptional.orElse(null);
         } catch (Exception e) {
             log.error("Some exception thrown: {}", e.getMessage());
-            return false;
+            return null;
         }
     }
 
@@ -52,7 +53,7 @@ public class JWTService {
     }
 
     @Nullable
-    public UUID getSessionId(String token) {
+    private UUID getSessionId(String token) {
         try {
             var claims = Jwts.parser()
                     .verifyWith(getSignKey())
@@ -61,6 +62,7 @@ public class JWTService {
                     .getPayload();
             return UUID.fromString(claims.getSubject());
         } catch (Exception e) {
+            log.info("No session id found");
             return null;
         }
     }
