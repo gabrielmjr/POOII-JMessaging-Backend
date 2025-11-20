@@ -9,6 +9,7 @@ import com.feng.ei.grupo.pooii_trabalho_final.request.SignupRequest;
 import com.feng.ei.grupo.pooii_trabalho_final.response.LoginResponse;
 import com.feng.ei.grupo.pooii_trabalho_final.response.SignupResponse;
 import com.feng.ei.grupo.pooii_trabalho_final.security.JWTService;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.util.UUID;
 
 @Service
 public class AuthenticationService {
@@ -31,7 +33,7 @@ public class AuthenticationService {
     @Autowired
     private JWTService jwtService;
 
-    public ResponseEntity<SignupResponse> signup(SignupRequest request) {
+    public ResponseEntity<@NotNull SignupResponse> signup(@NotNull SignupRequest request) {
         var userOptional = userRepository.findByEmail(request.email());
         if (userOptional.isPresent())
             return ResponseEntity.status(HttpStatus.ALREADY_REPORTED)
@@ -42,6 +44,7 @@ public class AuthenticationService {
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
                 .verified(true)
+                .lastSeenOn("NEVER")
                 .build();
 
         var session = Session.builder()
@@ -49,7 +52,6 @@ public class AuthenticationService {
                 .status("ACTIVE")
                 .user(user)
                 .build();
-
 
         userRepository.save(user);
         var sessionId = sessionRepository.save(session);
@@ -61,16 +63,28 @@ public class AuthenticationService {
                 .build());
     }
 
-    public ResponseEntity<LoginResponse> login(LoginRequest request) {
+    public ResponseEntity<@NotNull LoginResponse> login(@NotNull LoginRequest request) {
         var userOptional = userRepository.findByEmail(request.email());
         if (userOptional.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .build();
         var user = userOptional.get();
+        if (!passwordEncoder.matches(request.password(), user.getPassword()))
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .build();
+
+        var session = Session.builder()
+                .creationDate(OffsetDateTime.now())
+                .status("ACTIVE")
+                .user(user)
+                .build();
+        var sessionId = sessionRepository.save(session);
+        var authToken = jwtService.createToken(sessionId.getId());
         var response = LoginResponse.builder()
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .verified(user.isVerified())
+                .authToken(authToken)
                 .build();
         return ResponseEntity.ok(response);
     }
