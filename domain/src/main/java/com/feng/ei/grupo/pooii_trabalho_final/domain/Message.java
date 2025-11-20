@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-@Entity
+@Entity(name = "message")
 @Data
 @Builder
 @AllArgsConstructor
@@ -19,14 +19,8 @@ public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
-    @ManyToOne
-    @JoinColumn(name = "from_id")
-    private User from;
-
-    @ManyToOne
-    @JoinColumn(name = "to_id")
-    private User to;
+    private UUID fromId;
+    private UUID toId;
 
     @Column(name = "_timestamp")
     private OffsetDateTime timestamp;
