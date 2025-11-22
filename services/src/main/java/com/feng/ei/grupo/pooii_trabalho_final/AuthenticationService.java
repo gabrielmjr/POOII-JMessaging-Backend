@@ -39,7 +39,8 @@ public class AuthenticationService {
         var userOptional = userRepository.findByEmail(request.email());
         if (userOptional.isPresent())
             return ResponseEntity.status(HttpStatus.ALREADY_REPORTED)
-                    .build();
+                    .body(SignupResponse.builder()
+                            .build());
 
         var user = User.builder()
                 .username(request.username())
@@ -49,13 +50,13 @@ public class AuthenticationService {
                 .lastSeenOn("NEVER")
                 .build();
 
+        user = userRepository.save(user);
         var session = Session.builder()
                 .creationDate(OffsetDateTime.now())
                 .status("ACTIVE")
                 .userId(user.getId())
                 .build();
 
-        userRepository.save(user);
         var sessionId = sessionRepository.save(session);
         var authToken = jwtService.createToken(sessionId.getId());
 
@@ -69,17 +70,21 @@ public class AuthenticationService {
         var userOptional = userRepository.findByEmail(request.email());
         if (userOptional.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .build();
+                    .body(LoginResponse.builder()
+                            .build());
+
         var user = userOptional.get();
         if (!passwordEncoder.matches(request.password(), user.getPassword()))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .build();
+                    .body(LoginResponse.builder()
+                            .build());
 
         var session = Session.builder()
                 .creationDate(OffsetDateTime.now())
                 .status("ACTIVE")
                 .userId(user.getId())
                 .build();
+
         var sessionId = sessionRepository.save(session);
         var authToken = jwtService.createToken(sessionId.getId());
         var response = LoginResponse.builder()
@@ -88,6 +93,7 @@ public class AuthenticationService {
                 .verified(user.isVerified())
                 .authToken(authToken)
                 .build();
+
         return ResponseEntity.ok(response);
     }
 

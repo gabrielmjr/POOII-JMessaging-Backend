@@ -5,6 +5,7 @@ import com.feng.ei.grupo.pooii_trabalho_final.request.LoginRequest;
 import com.feng.ei.grupo.pooii_trabalho_final.request.SignupRequest;
 import com.feng.ei.grupo.pooii_trabalho_final.response.LoginResponse;
 import com.feng.ei.grupo.pooii_trabalho_final.response.SignupResponse;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -20,12 +21,12 @@ public class AuthController {
     private AuthenticationService service;
 
     @PostMapping("/signup")
-    public ResponseEntity<SignupResponse> signup(@RequestBody @Validated SignupRequest request) {
+    public ResponseEntity<@NotNull SignupResponse> signup(@RequestBody @Validated SignupRequest request) {
         return service.signup(request);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody @Validated LoginRequest request) {
+    public ResponseEntity<@NotNull LoginResponse> login(@RequestBody @Validated LoginRequest request) {
         return service.login(request);
     }
 }
